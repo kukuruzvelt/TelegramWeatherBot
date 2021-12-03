@@ -144,7 +144,7 @@ def advice(update, context):
 
 
 def main():
-    TOKEN = "2145526807:AAGaUQ7B3oFBuxa1QF4DluP9jO_LM7T4CWU"
+    TOKEN = 0;# token here
 
     # create the updater, that will automatically create also a dispatcher and a queue to
     # make them dialoge
