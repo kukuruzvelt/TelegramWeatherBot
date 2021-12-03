@@ -4,8 +4,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from WeatherProvider import WeatherioProvider
 import enum
 
-from token import Consts
-
 STATE = None
 WEATHER_PROVIDER = None
 
@@ -121,11 +119,20 @@ def setWeatherParams(update, context):
 
 def current(update, context):
     global TOWN
-    update.message.reply_text(f'{WEATHER_PROVIDER.getCurrent(TOWN, LANG)}')
+    try:
+        if WeatherioProvider.isOK(TOWN):
+            update.message.reply_text(f'{WEATHER_PROVIDER.getCurrent(TOWN, LANG)}')
+    except TypeError as e:
+        update.message.reply_text("City is not set")
 
 
 def forecast(update, context):
-    pass
+    global TOWN
+    try:
+        if WeatherioProvider.isOK(TOWN):
+            update.message.reply_text(f'{WEATHER_PROVIDER.getForecast(TOWN, LANG)}')
+    except TypeError as e:
+        update.message.reply_text("City is not set")
 
 
 def subscription(update, context):
@@ -137,11 +144,11 @@ def advice(update, context):
 
 
 def main():
-    token = Consts.TOKEN
+    TOKEN = "2145526807:AAGaUQ7B3oFBuxa1QF4DluP9jO_LM7T4CWU"
 
     # create the updater, that will automatically create also a dispatcher and a queue to
     # make them dialoge
-    updater = Updater(token, use_context=True)
+    updater = Updater(TOKEN, use_context=True)
     dispatcher = updater.dispatcher
     global WEATHER_PROVIDER
     WEATHER_PROVIDER = WeatherioProvider

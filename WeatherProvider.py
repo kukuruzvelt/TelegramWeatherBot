@@ -38,16 +38,22 @@ class WeatherioProvider(WeatherProvider):
         info = requests.get(
             WeatherioProvider.API_CURRENT + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"][0]
-        string = f'humidity: {json_list.get("rh")}, temp: {json_list.get("temp")}, ' \
-                 f'feels like: {json_list.get("app_temp")}, wind speed: {json_list.get("wind_spd")}, ' \
-                 f'Pressure: {json_list.get("pres")}, description: {json_list.get("weather").get("description")}'
+        string = f'humidity: {json_list.get("rh")}\n temp: {json_list.get("temp")}\n ' \
+                 f'feels like: {json_list.get("app_temp")}\n wind speed: {json_list.get("wind_spd")}\n' \
+                 f'Pressure: {json_list.get("pres")}\n description: {json_list.get("weather").get("description")}'
         return string
-
-
 
     @staticmethod
     def getForecast(city_name, language):
         # todo должен возвращать прогноз погоды, в зависимости от параметров(должны передаваться в конструкторе)
         info = requests.get(
-            WeatherioProvider.API_FORECAST + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
+            WeatherioProvider.API_FORECAST + city_name + f"&lang={language}" + "&days=7" + WeatherioProvider.API_KEY)
+        json_list = json.loads(info.text)["data"]
+        string = ""
+        for i in range(len(json_list)):
+            temp = json_list[i]
+            string += f'date: {temp.get("datetime")}\n humidity: {temp.get("rh")}\n temp: {temp.get("temp")}\n ' \
+                      f'feels like: {temp.get("app_temp")}\n wind speed: {temp.get("wind_spd")}\n' \
+                      f'Pressure: {temp.get("pres")}\n description: {temp.get("weather").get("description")}\n\n'
+        return string
 
