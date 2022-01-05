@@ -36,7 +36,7 @@ def callback_minute(context):
 
         except TypeError as e:
             context.bot.send_message(chat_id=chat_id,
-                                     text="City is not set")
+                                     text=Languages.get_message("what_city", lang))
 
 
 # function to handle the /help command
