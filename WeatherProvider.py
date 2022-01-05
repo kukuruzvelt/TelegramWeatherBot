@@ -1,17 +1,18 @@
 import json
 from abc import ABC, abstractmethod
 import requests
+from Languages import Languages
 
 
 class WeatherProvider(ABC):
     @staticmethod
     @abstractmethod
-    def getCurrent(city_name, language):
+    def getCurrent(city_name, language, params):
         pass
 
     @staticmethod
     @abstractmethod
-    def getForecast(city_name, language):
+    def getForecast(city_name, language, params):
         pass
 
     @staticmethod
@@ -33,27 +34,48 @@ class WeatherioProvider(WeatherProvider):
         return False
 
     @staticmethod
-    def getCurrent(city_name, language):
-        # todo должен возвращать текущую погоду, в зависимости от параметров(должны передаваться в конструкторе)
+    def getCurrent(city_name, language, params):
+        names = Languages.get_message("weather_provider_names", language)
         info = requests.get(
             WeatherioProvider.API_CURRENT + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"][0]
-        string = f'humidity: {json_list.get("rh")}\n temp: {json_list.get("temp")}\n ' \
-                 f'feels like: {json_list.get("app_temp")}\n wind speed: {json_list.get("wind_spd")}\n' \
-                 f'Pressure: {json_list.get("pres")}\n description: {json_list.get("weather").get("description")}'
+        string = ""
+        if params[0]:
+            string += f'{names[0]}: {json_list.get("rh")}'
+        if params[1]:
+            string += f'\n{names[1]}: {json_list.get("temp")}'
+        if params[2]:
+            string += f'\n{names[2]}: {json_list.get("app_temp")}'
+        if params[3]:
+            string += f'\n{names[3]}: {json_list.get("wind_spd")}'
+        if params[4]:
+            string += f'\n{names[4]}: {json_list.get("pres")}'
+        if params[5]:
+            string += f'\n{names[5]}: {json_list.get("weather").get("description")}'
         return string
 
     @staticmethod
-    def getForecast(city_name, language):
-        # todo должен возвращать прогноз погоды, в зависимости от параметров(должны передаваться в конструкторе)
+    def getForecast(city_name, language, params):
+        names = Languages.get_message("weather_provider_names", language)
         info = requests.get(
             WeatherioProvider.API_FORECAST + city_name + f"&lang={language}" + "&days=7" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"]
         string = ""
         for i in range(len(json_list)):
-            temp = json_list[i]
-            string += f'date: {temp.get("datetime")}\n humidity: {temp.get("rh")}\n temp: {temp.get("temp")}\n ' \
-                      f'feels like: {temp.get("app_temp")}\n wind speed: {temp.get("wind_spd")}\n' \
-                      f'Pressure: {temp.get("pres")}\n description: {temp.get("weather").get("description")}\n\n'
+            t = json_list[i]
+            string += f'date: {t.get("datetime")}'
+            if params[0]:
+                string += f'\n{names[0]}: {t.get("rh")}'
+            if params[1]:
+                string += f'\n{names[1]}: {t.get("temp")}'
+            if params[2]:
+                string += f'\n{names[2]}: {t.get("app_temp")}'
+            if params[3]:
+                string += f'\n{names[3]}: {t.get("wind_spd")}'
+            if params[4]:
+                string += f'\n{names[4]}: {t.get("pres")}'
+            if params[5]:
+                string += f'\n{names[5]}: {t.get("weather").get("description")}'
+            string += f'\n\n'
         return string
 
