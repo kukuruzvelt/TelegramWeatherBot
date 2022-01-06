@@ -287,7 +287,14 @@ def subscription(update, context):
 
 
 def advice(update, context):
-    pass
+    town = DAO.get_city(update.message.chat.id)
+    lang = DAO.get_language(update.message.chat.id)
+    try:
+        update.message.reply_text(f'{WEATHER_PROVIDER.getAdvice(town, lang)}')
+    except TypeError as e:
+        print(e)
+        lang = DAO.get_language(update.message.chat.id)
+        update.message.reply_text(Languages.get_message("what_city", lang))
 
 
 def main():
