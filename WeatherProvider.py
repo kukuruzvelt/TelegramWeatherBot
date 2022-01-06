@@ -57,13 +57,14 @@ class WeatherioProvider(WeatherProvider):
     @staticmethod
     def getForecast(city_name, language, params):
         names = Languages.get_message("weather_provider_names", language)
+        date = Languages.get_message("weather_provider_date", language)
         info = requests.get(
             WeatherioProvider.API_FORECAST + city_name + f"&lang={language}" + "&days=7" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"]
         string = ""
         for i in range(len(json_list)):
             t = json_list[i]
-            string += f'date: {t.get("datetime")}'
+            string += f'{date}: {t.get("datetime")}'
             if params[0]:
                 string += f'\n{names[0]}: {t.get("rh")}'
             if params[1]:
