@@ -53,6 +53,58 @@ class WeatherioProvider(WeatherProvider):
         if params[5]:
             string += f'\n{names[5]}: {json_list.get("weather").get("description")}'
         return string
+    
+    @staticmethod
+    def getAdvice(city_name, language):
+        info = requests.get(
+            WeatherioProvider.API_CURRENT + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
+        json_list = json.loads(info.text)["data"][0]
+        string = ""
+
+        if json_list.get("wind_spd") > 20:
+            return Languages.get_message("so_windy", language)
+
+        if json_list.get("temp") < -10:
+            if json_list.get("rh") < 10:
+                string += Languages.get_message("less_minus10", language)
+            else:
+                string += Languages.get_message("less_minus10_wet", language)
+            if 5 < json_list.get("wind_spd") < 20:
+                string += Languages.get_message("less_minus10_windy", language)
+
+        elif json_list.get("temp") < 0:
+            if json_list.get("rh") < 10:
+                string += Languages.get_message("less0", language)
+            else:
+                string += Languages.get_message("less0_wet", language)
+            if 5 < json_list.get("wind_spd") < 20:
+                string += Languages.get_message("less0_windy", language)
+
+        elif json_list.get("temp") < 10:
+            if json_list.get("rh") < 10:
+                string += Languages.get_message("less10", language)
+            else:
+                string += Languages.get_message("less10_wet", language)
+            if 5 < json_list.get("wind_spd") < 20:
+                string += Languages.get_message("less10_windy", language)
+
+        elif json_list.get("temp") < 20:
+            if json_list.get("rh") < 10:
+                string += Languages.get_message("less20", language)
+            else:
+                string += Languages.get_message("less20_wet", language)
+            if 5 < json_list.get("wind_spd") < 20:
+                string += Languages.get_message("less20_windy", language)
+
+        else:
+            if json_list.get("rh") < 10:
+                string += Languages.get_message("heat", language)
+            else:
+                string += Languages.get_message("heat_wet", language)
+            if 5 < json_list.get("wind_spd") < 20:
+                string += Languages.get_message("heat_windy", language)
+
+        return string
 
     @staticmethod
     def getForecast(city_name, language, params):
