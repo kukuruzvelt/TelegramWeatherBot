@@ -29,5 +29,6 @@
   "subscription_del": "Delete subscription",
   "dao_type_err": "Too many subscriptions, delete previous to add a new one",
   "dao_value_err": "You are already subscribed for this time, try again with another time",
-  "weather_provider_names": ["Humidity", "Temperature", "Feels like temperature", "Wind speed", "Pressure", "Weather description"]
+  "weather_provider_names": ["Humidity", "Temperature", "Feels like temperature", "Wind speed", "Pressure", "Weather description"],
+  "weather_provider_date": "Date"
 }
