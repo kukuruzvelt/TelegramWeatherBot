@@ -30,5 +30,21 @@
   "dao_type_err": "Too many subscriptions, delete previous to add a new one",
   "dao_value_err": "You are already subscribed for this time, try again with another time",
   "weather_provider_names": ["Humidity", "Temperature", "Feels like temperature", "Wind speed", "Pressure", "Weather description"],
-  "weather_provider_date": "Date"
+  "weather_provider_date": "Date",
+  "so_windy": "It's a hurricane outside. Stay at home",
+  "less_minus10": "Wear a down jacket, jacket, hat, winter boots",
+  "less_minus10_wet": "Wear a down jacket with a hood, a jacket, winter boots with a Gore-Tex membrane (waterproof)",
+  "less_minus10_windy": ", scarf and mittens",
+  "less0": "Put on your coat, sneakers",
+  "less0_wet": "Wear a hooded jacket, sneakers with a Gore-Tex membrane (waterproof)",
+  "less0_windy": ", light scarf and gloves",
+  "less10": "Wear a jacket without a hood, shoes",
+  "less10_wet": "Take an umbrella! Wear a hooded jacket, rubber boots",
+  "less10_windy": ", you can wear a cap, bandana or scarf on your head and neck",
+  "less20": "Wear a sweater, light shoes",
+  "less20_wet": "Take an umbrella! Wear a hooded windbreaker, rubber boots",
+  "less20_windy": ", you can wear a cap or bandana",
+  "heat": "Wear a T-shirt, cap, sandals or slippers",
+  "heat_wet": "Take an umbrella! Wear a sleeveless T-shirt, rubber boots",
+  "heat_windy": "please bring your windbreaker"
 }
