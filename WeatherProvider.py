@@ -2,6 +2,7 @@ import json
 from abc import ABC, abstractmethod
 import requests
 from Languages import Languages
+import constants
 
 
 class WeatherProvider(ABC):
@@ -55,60 +56,62 @@ class WeatherioProvider(WeatherProvider):
         return string
     
     @staticmethod
-    def getAdvice(city_name, language):
+        def getAdvice(city_name, language):
         info = requests.get(
             WeatherioProvider.API_CURRENT + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"][0]
+
         string = ""
+
         wind_spd = json_list.get("wind_spd")
         wet = json_list.get("rh")
         temp = json_list.get("temp")
 
-        if wind_spd > 20:
+        if wind_spd > constants.MAX_WIND:
             return Languages.get_message("so_windy", language)
 
-        if temp < -10:
-            if wet < 10:
+        if temp < constants.TEMP1:
+            if wet < constants.WET_LIMIT:
                 string += Languages.get_message("less_minus10", language)
             else:
                 string += Languages.get_message("less_minus10_wet", language)
-            if 5 <= wind_spd < 20:
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
                 string += Languages.get_message("less_minus10_windy", language)
 
-        elif temp < 0:
-            if wet < 10:
+        elif temp < constants.TEMP2:
+            if wet < constants.WET_LIMIT:
                 string += Languages.get_message("less0", language)
             else:
                 string += Languages.get_message("less0_wet", language)
-            if 5 <= wind_spd < 20:
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
                 string += Languages.get_message("less0_windy", language)
 
-        elif temp < 10:
-            if wet < 10:
+        elif temp < constants.TEMP3:
+            if wet < constants.WET_LIMIT:
                 string += Languages.get_message("less10", language)
             else:
                 string += Languages.get_message("less10_wet", language)
-            if 5 <= wind_spd < 20:
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
                 string += Languages.get_message("less10_windy", language)
 
-        elif temp < 20:
-            if wet < 10:
+        elif temp < constants.TEMP4:
+            if wet < constants.WET_LIMIT:
                 string += Languages.get_message("less20", language)
             else:
                 string += Languages.get_message("less20_wet", language)
-            if 5 <= wind_spd < 20:
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
                 string += Languages.get_message("less20_windy", language)
 
         else:
-            if wet < 10:
+            if wet < constants.WET_LIMIT:
                 string += Languages.get_message("heat", language)
             else:
                 string += Languages.get_message("heat_wet", language)
-            if 5 <= wind_spd < 20:
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
                 string += Languages.get_message("heat_windy", language)
 
         return string
-
+    
     @staticmethod
     def getForecast(city_name, language, params):
         names = Languages.get_message("weather_provider_names", language)
