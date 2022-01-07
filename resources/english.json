@@ -34,17 +34,17 @@
   "so_windy": "It's a hurricane outside. Stay at home",
   "less_minus10": "Wear a down jacket, jacket, hat, winter boots",
   "less_minus10_wet": "Wear a down jacket with a hood, a jacket, winter boots with a Gore-Tex membrane (waterproof)",
-  "less_minus10_windy": ", scarf and mittens",
+  "less_minus10_windy": ", scarf and mittens. Strong wind!",
   "less0": "Put on your coat, sneakers",
   "less0_wet": "Wear a hooded jacket, sneakers with a Gore-Tex membrane (waterproof)",
-  "less0_windy": ", light scarf and gloves",
+  "less0_windy": ", light scarf and gloves. Strong wind!",
   "less10": "Wear a jacket without a hood, shoes",
   "less10_wet": "Take an umbrella! Wear a hooded jacket, rubber boots",
-  "less10_windy": ", you can wear a cap, bandana or scarf on your head and neck",
+  "less10_windy": ", you can wear a cap, bandana or scarf on your head and neck. Strong wind!",
   "less20": "Wear a sweater, light shoes",
   "less20_wet": "Take an umbrella! Wear a hooded windbreaker, rubber boots",
-  "less20_windy": ", you can wear a cap or bandana",
+  "less20_windy": ", you can wear a cap or bandana. Strong wind!",
   "heat": "Wear a T-shirt, cap, sandals or slippers",
   "heat_wet": "Take an umbrella! Wear a sleeveless T-shirt, rubber boots",
-  "heat_windy": "please bring your windbreaker"
+  "heat_windy": ", also you can bring your windbreaker. Strong wind!"
 }
