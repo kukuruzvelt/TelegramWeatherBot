@@ -2,6 +2,7 @@ import json
 from abc import ABC, abstractmethod
 import requests
 from Languages import Languages
+import constants
 
 
 class WeatherProvider(ABC):
@@ -55,15 +56,73 @@ class WeatherioProvider(WeatherProvider):
         return string
 
     @staticmethod
+    def getAdvice(city_name, language):
+        info = requests.get(
+            WeatherioProvider.API_CURRENT + city_name + f"&lang={language}" + WeatherioProvider.API_KEY)
+        json_list = json.loads(info.text)["data"][0]
+
+        string = ""
+
+        wind_spd = json_list.get("wind_spd")
+        wet = json_list.get("rh")
+        temp = json_list.get("temp")
+
+        if wind_spd > constants.MAX_WIND:
+            return Languages.get_message("so_windy", language)
+
+        if temp < constants.TEMP1:
+            if wet < constants.WET_LIMIT:
+                string += Languages.get_message("less_minus10", language)
+            else:
+                string += Languages.get_message("less_minus10_wet", language)
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
+                string += Languages.get_message("less_minus10_windy", language)
+
+        elif temp < constants.TEMP2:
+            if wet < constants.WET_LIMIT:
+                string += Languages.get_message("less0", language)
+            else:
+                string += Languages.get_message("less0_wet", language)
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
+                string += Languages.get_message("less0_windy", language)
+
+        elif temp < constants.TEMP3:
+            if wet < constants.WET_LIMIT:
+                string += Languages.get_message("less10", language)
+            else:
+                string += Languages.get_message("less10_wet", language)
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
+                string += Languages.get_message("less10_windy", language)
+
+        elif temp < constants.TEMP4:
+            if wet < constants.WET_LIMIT:
+                string += Languages.get_message("less20", language)
+            else:
+                string += Languages.get_message("less20_wet", language)
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
+                string += Languages.get_message("less20_windy", language)
+
+        else:
+            if wet < constants.WET_LIMIT:
+                string += Languages.get_message("heat", language)
+            else:
+                string += Languages.get_message("heat_wet", language)
+            if constants.MIN_WIND <= wind_spd < constants.MAX_WIND:
+                string += Languages.get_message("heat_windy", language)
+
+        return string
+
+    @staticmethod
     def getForecast(city_name, language, params):
         names = Languages.get_message("weather_provider_names", language)
+        date = Languages.get_message("weather_provider_date", language)
         info = requests.get(
             WeatherioProvider.API_FORECAST + city_name + f"&lang={language}" + "&days=7" + WeatherioProvider.API_KEY)
         json_list = json.loads(info.text)["data"]
         string = ""
         for i in range(len(json_list)):
             t = json_list[i]
-            string += f'date: {t.get("datetime")}'
+            string += f'{date}: {t.get("datetime")}'
             if params[0]:
                 string += f'\n{names[0]}: {t.get("rh")}'
             if params[1]:
@@ -78,4 +137,3 @@ class WeatherioProvider(WeatherProvider):
                 string += f'\n{names[5]}: {t.get("weather").get("description")}'
             string += f'\n\n'
         return string
-
