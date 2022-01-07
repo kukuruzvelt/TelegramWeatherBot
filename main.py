@@ -36,7 +36,7 @@ def callback_minute(context):
 
         except TypeError as e:
             context.bot.send_message(chat_id=chat_id,
-                                     text="City is not set")
+                                     text=Languages.get_message("what_city", lang))
 
 
 # function to handle the /help command
@@ -257,7 +257,6 @@ def current(update, context):
         update.message.reply_text(f'{WEATHER_PROVIDER.getCurrent(town, lang, params)}')
     except TypeError as e:
         print(e)
-        lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("what_city", lang))
 
 
@@ -268,7 +267,6 @@ def forecast(update, context):
     try:
         update.message.reply_text(f'{WEATHER_PROVIDER.getForecast(town, lang, params)}')
     except TypeError as e:
-        lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("what_city", lang))
 
 
@@ -287,11 +285,17 @@ def subscription(update, context):
 
 
 def advice(update, context):
-    pass
+    town = DAO.get_city(update.message.chat.id)
+    lang = DAO.get_language(update.message.chat.id)
+    try:
+        update.message.reply_text(f'{WEATHER_PROVIDER.getAdvice(town, lang)}')
+    except TypeError as e:
+        print(e)
+        update.message.reply_text(Languages.get_message("what_city", lang))
 
 
 def main():
-    TOKEN = "2145526807:AAGaUQ7B3oFBuxa1QF4DluP9jO_LM7T4CWU"
+    TOKEN = "abc"
 
     # create the updater, that will automatically create also a dispatcher and a queue to
     # make them dialoge
