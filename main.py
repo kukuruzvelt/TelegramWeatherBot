@@ -1,3 +1,5 @@
+import threading
+import time
 from datetime import datetime
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
@@ -15,29 +17,13 @@ def start(update, context):
     user_id = update.message.chat.id
     if not DAO.is_in_db(user_id):
         DAO.create_new_user(user_id)
-        context.job_queue.run_repeating(callback_minute, interval=59, first=1,
-                                            context=update.message.chat_id) 
+        # context.job_queue.run_repeating(callback_minute, interval=59, first=1,
+        #                                     context=update.message.chat_id)
         lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("start_new", lang, update.message.chat.first_name))
     else:
         lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("start_old", lang, update.message.chat.first_name))
-
-
-def callback_minute(context):
-    chat_id = context.job.context
-    current_time = datetime.now().strftime("%H:%M")
-    if chat_id in DAO.get_users_subscribe_for_time(current_time):
-        town = DAO.get_city(chat_id)
-        lang = DAO.get_language(chat_id)
-        params = DAO.get_params(chat_id)
-        try:
-            context.bot.send_message(chat_id=chat_id,
-                                     text=f'{WEATHER_PROVIDER.getCurrent(town, lang, params)}')
-
-        except TypeError as e:
-            context.bot.send_message(chat_id=chat_id,
-                                     text=Languages.get_message("what_city", lang))
 
 
 # function to handle the /help command
@@ -186,7 +172,8 @@ def __create_subscription_keyboard(params, lang):
 def setWeatherParams(update, context):
     lang = DAO.get_language(update.callback_query.message.chat.id)
     DAO.set_action(update.callback_query.message.chat.id, "PARAMS")
-    reply_markup = InlineKeyboardMarkup(__create_params_keyboard(DAO.get_params(update.callback_query.message.chat.id), lang))
+    reply_markup = InlineKeyboardMarkup(
+        __create_params_keyboard(DAO.get_params(update.callback_query.message.chat.id), lang))
     message_reply_text = Languages.get_message("setWeatherParams", lang)
     update.callback_query.edit_message_text(message_reply_text, reply_markup=reply_markup)
 
@@ -272,6 +259,11 @@ def forecast(update, context):
 
 
 def subscription(update, context):
+    if threading.active_count() < 2:
+        t = threading.Thread(target=callback_minute_target(update, context))
+        t.daemon = True
+        t.start()
+
     lang = DAO.get_language(update.message.chat.id)
     DAO.set_action(update.message.chat.id, "TIME-SLOTS")
     keyboard = [
@@ -295,18 +287,36 @@ def advice(update, context):
         update.message.reply_text(Languages.get_message("what_city", lang))
 
 
+def callback_minute(update, context):
+    current_time = datetime.now().strftime("%H:%M")
+    for chat_id in DAO.get_users_subscribe_for_time(current_time):
+        town = DAO.get_city(chat_id)
+        lang = DAO.get_language(chat_id)
+        params = DAO.get_params(chat_id)
+        try:
+            context.bot.send_message(chat_id=chat_id,
+                                     text=f'{WEATHER_PROVIDER.getCurrent(town, lang, params)}')
+
+        except TypeError as e:
+            context.bot.send_message(chat_id=chat_id,
+                                     text=Languages.get_message("what_city", lang))
+
+
+def callback_minute_target(update, context):
+    while True:
+        callback_minute(update, context)
+        time.sleep(59)
+
+
 def main():
     TOKEN = "abc"
 
-    # create the updater, that will automatically create also a dispatcher and a queue to
-    # make them dialoge
     updater = Updater(TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
     global WEATHER_PROVIDER
     WEATHER_PROVIDER = WeatherioProvider
 
-    # add handlers for start and help commands
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("settings", settings))
@@ -315,14 +325,12 @@ def main():
     dispatcher.add_handler(CommandHandler("subscription", subscription))
     dispatcher.add_handler(CommandHandler("advice", advice))
 
-    # add an handler for normal text (not commands)
     dispatcher.add_handler(MessageHandler(Filters.text, text))
     dispatcher.add_handler(CallbackQueryHandler(callback))
 
     # add an handler for errors
     dispatcher.add_error_handler(error)
 
-    # start your shiny new bot
     updater.start_polling()
 
     # run the bot until Ctrl-C

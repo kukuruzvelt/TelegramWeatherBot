@@ -139,7 +139,7 @@ class DAO:
         for i in cursor.fetchall():
             t = str(i[0])
             times.append(t[:len(t)-3])
-        return times
+        return times.sort()
 
     @staticmethod
     def get_users_subscribe_for_time(time):
