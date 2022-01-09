@@ -138,7 +138,7 @@ def callback(update, context):
 
 def getSubscriptionInfo(update, context):
     lang = DAO.get_language(update.callback_query.message.chat.id)
-    update.callback_query.message.reply_text(Languages.get_message("getSubscriptionInfo", lang))
+    update.callback_query.edit_message_text(Languages.get_message("getSubscriptionInfo", lang))
 
 
 def getSubscriptions(update, context):
