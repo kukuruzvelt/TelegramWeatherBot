@@ -13,13 +13,14 @@ WEATHER_PROVIDER = WeatherProvider
 
 def start(update, context):
     user_id = update.message.chat.id
-    context.job_queue.run_repeating(callback_minute, interval=59, first=1,
-                                    context=update.message.chat_id)
-    lang = DAO.get_language(update.message.chat.id)
     if not DAO.is_in_db(user_id):
         DAO.create_new_user(user_id)
+        context.job_queue.run_repeating(callback_minute, interval=59, first=1,
+                                            context=update.message.chat_id) 
+        lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("start_new", lang, update.message.chat.first_name))
     else:
+        lang = DAO.get_language(update.message.chat.id)
         update.message.reply_text(Languages.get_message("start_old", lang, update.message.chat.first_name))
 
 
