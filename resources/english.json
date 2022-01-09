@@ -1,8 +1,7 @@
 {
   "start_new": "Welcome %, set up the city in settings to use the bot",
   "start_old": "Welcome back, %!",
-  "help":"help command received",
-  "error": "An error occured. If you have not set up the city in the settings yet, do it",
+  "help": "/settings - configure language, city, weather parameters \n /current - forecast for the day \n /forecast - forecast for a week \n / subscription - subscribe \n / advice - advice on clothing \n",  "error": "An error occured. If you have not set up the city in the settings yet, do it",
   "text": "I don't know this command",
   "callback_lang": "Selected language: %",
   "callback_time_slots": "Removal of subscriptions completed",
